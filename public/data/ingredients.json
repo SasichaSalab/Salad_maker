@@ -1,0 +1,33 @@
+[
+    {
+      "imagePath": "/icons/vegetables.png",
+      "name": "Vegetables",
+      "value_cal": 50,
+      "count": 0
+    },
+    {
+      "imagePath": "/icons/fruit.png",
+      "name": "Fruit",
+      "value_cal": 100,
+      "count": 0
+    },
+    {
+      "imagePath": "/icons/vegetables.png",
+      "name": "Vegetables",
+      "value_cal": 50,
+      "count": 0
+    },
+    {
+      "imagePath": "/icons/fruit.png",
+      "name": "Fruit",
+      "value_cal": 100,
+      "count": 0
+    },
+    {
+      "imagePath": "/icons/fruit.png",
+      "name": "Fruit",
+      "value_cal": 100,
+      "count": 0
+    }
+  ]
+  

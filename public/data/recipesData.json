@@ -1,0 +1,17 @@
+[
+    {
+      "id": 1,
+      "name": "Lettuce",
+      "count": 2,
+      "cal_value": 15,
+      "image": "/assets/icons/salad_2.png"
+    },
+    {
+      "id": 2,
+      "name": "Tomato",
+      "count": 3,
+      "cal_value": 20,
+      "image": "/assets/icons/dressing.png"
+    }
+  ]
+  

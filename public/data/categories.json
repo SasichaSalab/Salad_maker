@@ -1,0 +1,23 @@
+[
+    {
+      "imagePath": "/icons/vegetables.png",
+      "cardName": "vegetable"
+    },
+    {
+      "imagePath": "/icons/fruit.png",
+      "cardName": "fruit"
+    },
+    {
+      "imagePath": "/icons/toppings.png",
+      "cardName": "toppings"
+    },
+    {
+      "imagePath": "/icons/protein.png",
+      "cardName": "protein"
+    },
+    {
+      "imagePath": "/icons/dressing.png",
+      "cardName": "dressing"
+    }
+  ]
+  

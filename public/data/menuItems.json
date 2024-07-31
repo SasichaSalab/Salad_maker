@@ -1,0 +1,19 @@
+[
+    {
+      "name": "Home",
+      "path": "/",
+      "icon": "home"
+    },
+    {
+      "name": "Salad Maker",
+      "path": "/salad_maker",
+      "icon": "food_icon"
+    },
+    {
+      "name": "Recipe",
+      "path": "/recipe",
+      "icon": "recipe",
+      "aliases": ["/recipe/edit"]
+    }
+  ]
+  
