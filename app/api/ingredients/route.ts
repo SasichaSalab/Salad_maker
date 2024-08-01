@@ -4,15 +4,25 @@ import ingredientsData from '../../../public/data/ingredient.json'; // Adjust th
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const category = url.searchParams.get('category');
+  const searchTerm = url.searchParams.get('search')?.toLowerCase() || '';
+
+  let filteredIngredients = ingredientsData;
 
   if (category) {
     // Filter ingredients by category
-    const filteredIngredients = ingredientsData.filter(
+    filteredIngredients = filteredIngredients.filter(
       (ingredient) => ingredient.category.toLowerCase() === category.toLowerCase()
     );
-    return NextResponse.json(filteredIngredients);
   }
 
-  // Return all ingredients if no category is specified
-  return NextResponse.json(ingredientsData);
+  if (searchTerm) {
+    // Filter ingredients by search term (name or calories)
+    filteredIngredients = filteredIngredients.filter(
+      (ingredient) =>
+        ingredient.ingredient.toLowerCase().includes(searchTerm) ||
+        ingredient.calories.toString().includes(searchTerm)
+    );
+  }
+
+  return NextResponse.json(filteredIngredients);
 }

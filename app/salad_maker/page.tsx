@@ -5,8 +5,11 @@ import SearchBar from '@/components/SearchBar';
 import CategoryCard from '@/components/CategoryCard';
 import Ingredients from '@/components/Ingredients';
 import RecipeDialog from '@/components/RecipeDialog';
-import categories from '../../public/data/categories.json'
-
+import categories from '../../public/data/categories.json';
+import { useDispatch, useSelector } from 'react-redux';
+import { addToCart, removeFromCart, updateCartItem } from '../../store/cartSlice'; // Import actions
+import { RootState } from '@/store/store';
+import { incrementCount, decrementCount } from '@/store/ingredientsSlice';
 interface Category {
   imagePath: string;
   cardName: string;
@@ -18,18 +21,28 @@ interface Ingredient {
   category: string;
   image: string | null;
   calories: number;
-  count?: number; // Add optional count property
+  count: number; // Ensure count is required
 }
 
 const Page: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [showDialog, setShowDialog] = useState(false);
+  const dispatch = useDispatch(); // Initialize dispatch
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
-        const response = await fetch('/api/ingredients');
+        const query = new URLSearchParams();
+        if (selectedCategories.length > 0) {
+          query.append('category', selectedCategories.join(','));
+        }
+        if (searchTerm) {
+          query.append('search', searchTerm);
+        }
+
+        const response = await fetch(`/api/ingredients?${query.toString()}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -41,7 +54,7 @@ const Page: React.FC = () => {
     };
 
     fetchIngredients();
-  }, []);
+  }, [selectedCategories, searchTerm]);
 
   const toggleCategory = (cardName: string) => {
     setSelectedCategories((prev) =>
@@ -51,17 +64,64 @@ const Page: React.FC = () => {
     );
   };
 
-  const handleCountChange = (index: number, newCount: number) => {
-    const updatedIngredients = [...ingredients];
-    updatedIngredients[index] = { ...updatedIngredients[index], count: newCount };
-    setIngredients(updatedIngredients);
+  const handleAddToCart = (id: number, count: number) => {
+    if (count > 0) {
+      dispatch(addToCart({ id, count }));
+    }
   };
 
+  const handleRemoveFromCart = (id: number, newCount: number) => {
+    // Update local state to reflect the new count
+    setIngredients((prevIngredients) =>
+      prevIngredients.map((ingredient) =>
+        ingredient.id === id ? { ...ingredient, count: newCount } : ingredient
+      )
+    );
+
+    // Dispatch an action to update the cart in Redux
+    if (newCount <= 0) {
+      dispatch(removeFromCart(id)); // Assuming removeFromCart is your action for removal
+    } else {
+      dispatch(updateCartItem({ id, count: newCount })); // Ensure you have an action for this
+    }
+  };
+
+  const totalCart = useSelector((state: RootState) => state.cart.total);
+  const totalCal = useSelector((state: RootState) => state.cart.totalCal);
   const handleCreateRecipe = (recipeName: string) => {
     alert(`Recipe "${recipeName}" created successfully!`);
     setShowDialog(false);
   };
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const handleIncrement = (id: number) => {
+    // Dispatch increment count action
+    dispatch(incrementCount(id));
 
+    // Add or update item in cart
+    const newCount = (ingredientCounts[id] || 0) + 1;
+    if (cartItems[id]) {
+      dispatch(updateCartItem({ id, count: newCount }));
+    } else {
+      dispatch(addToCart({ id, count: newCount }));
+    }
+  };
+
+  const handleDecrement = (id: number) => {
+    // Dispatch decrement count action
+    dispatch(decrementCount(id));
+
+    // Remove item from cart if count is 0
+    const newCount = (ingredientCounts[id] || 0) - 1;
+    if (newCount <= 0) {
+      dispatch(removeFromCart(id));
+    } else {
+      dispatch(updateCartItem({ id, count: newCount }));
+    }
+  };
+  const ingredientCounts = useSelector((state: RootState) => state.ingredients.ingredients);
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
   return (
     <div className='relative flex flex-col min-h-screen'>
       {/* Main Content */}
@@ -69,42 +129,52 @@ const Page: React.FC = () => {
         {/* Header Section */}
         <div className='flex flex-wrap justify-between items-center gap-5'>
           <p className='text-3xl font-bold'>Let's Create...your own salad!!!</p>
-          <SearchBar />
+          <SearchBar onSearch={handleSearch} />
         </div>
 
         {/* Image Section */}
         <div className='relative flex flex-row justify-start items-start bg-fourth lg:h-52 h-64 rounded-xl w-full'>
-          <div className='w-1/4 h-full sm:flex items-start flex-col justify-end hidden'>
-            <Image
-              src="/icons/circle_1.png"
-              alt="Circle 1"
-              width={200}
-              height={200}
-            />
+          <div className='h-full w-1/5 md:flex items-start flex-col justify-end hidden'>
+            <div className='xl:w-56 xl:h-24 w-32 h-14 sm:flex items-start flex-col justify-end relative'>
+              <Image
+                src="/assets/icons/circle_1.png"
+                alt="Circle 1"
+                fill
+                sizes='20vh'
+              />
+            </div>
           </div>
-          <div className='w-1/4 h-full sm:flex flex-col items-start justify-start hidden'>
-            <Image
-              src="/assets/icons/circle_2.png"
-              alt="Circle 2"
-              width={200}
-              height={200}
-            />
+          <div className='h-full w-1/5 md:flex items-start flex-col justify-start hidden'>
+            <div className='xl:w-56 xl:h-24 w-32 h-14 sm:flex items-start flex-col justify-start relative'>
+              <Image
+                src="/assets/icons/circle_2.png"
+                alt="Circle 2"
+                fill
+                sizes='20vh'
+              />
+            </div>
           </div>
-          <div className='w-1/2 sm:w-1/4 h-full items-end flex flex-col justify-end'>
-            <Image
-              src="/assets/icons/salad_2.png"
-              alt="Salad 1"
-              width={350}
-              height={350}
-            />
-          </div>
-          <div className='w-1/2 sm:w-1/4 h-full lg:-ml-16 xl:-ml-3'>
-            <Image
-              src="/assets/icons/salad_1.png"
-              alt="Salad 2"
-              width={350}
-              height={350}
-            />
+          <div className='absolute flex flex-row h-full right-0 items-center md:w-3/5 w-full'>
+            <div className='h-full w-full flex items-end flex-col justify-end xl:-mr-5'>
+              <div className='xl:w-80 xl:h-32 lg:w-56 lg:h-24 md:w-48 md:h-20 w-1/2 h-1/3 block md:flex items-start flex-col justify-end md:relative absolute'>
+                <Image
+                  src="/assets/icons/salad_2.png"
+                  alt="Salad 2"
+                  fill
+                  sizes='20vh'
+                />
+              </div>
+            </div>
+            <div className='h-full w-full md:flex block items-start flex-col justify-start'>
+              <div className='xl:w-96 xl:h-52 lg:w-64 lg:h-40 md:w-48 md:h-28 w-1/2 h-1/2 block sm:flex items-start flex-col justify-start md:relative absolute'>
+                <Image
+                  src="/assets/icons/salad_1.png"
+                  alt="Salad 1"
+                  fill
+                  sizes='20vh'
+                />
+              </div>
+            </div>
           </div>
           <div className='absolute inset-0 flex flex-col justify-center items-start text-primary text-start p-5 gap-2'>
             <h1 className='text-3xl font-bold'>Fresh &</h1>
@@ -136,19 +206,19 @@ const Page: React.FC = () => {
           <p className='text-2xl font-bold'>Choose your ingredients to make a salad</p>
           <div className='w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5'>
             {ingredients
-              .filter((ingredient) =>
-                selectedCategories.length > 0
-                  ? selectedCategories.includes(ingredient.category)
-                  : true
+              .filter(ingredient =>
+                selectedCategories.length === 0 || selectedCategories.includes(ingredient.category)
               )
-              .map((ingredient, index) => (
+              .map(ingredient => (
                 <Ingredients
                   key={ingredient.id}
-                  imagePath={ingredient.image || ''}
+                  imagePath={ingredient.image || '/assets/ingredients/no-image.png'}
                   name={ingredient.ingredient}
                   value_cal={ingredient.calories}
-                  count={ingredient.count || 0}
-                  onCountChange={(newCount) => handleCountChange(index, newCount)}
+                  id={ingredient.id}
+                  count={ingredientCounts[ingredient.id] || 0} // Get count from Redux store
+                  onIncrement={handleIncrement}
+                  onDecrement={handleDecrement}
                 />
               ))}
           </div>
@@ -156,25 +226,25 @@ const Page: React.FC = () => {
       </div>
       {/* Fixed Tab */}
       <div className='fixed bottom-0 left-0 lg:pl-60 pl-20 w-full lg:h-20 h-auto py-3 bg-white shadow-[250px_-5px_5px_2px_rgba(0,0,0,0.05)] flex flex-wrap items-center justify-center z-10'>
-        <div className='p-1 md:w-5/6 w-full lg:h-full h-14'>
-          <div className=' bg-secondary rounded-xl w-full h-full text-center flex flex-row items-center justify-between px-3 text-xl font-bold text-white'>
-            <div className='flex flex-row gap-2 items-center justify-center'>
-              <div className='w-8 h-8 rounded-lg text-secondary bg-white'>3</div>
-              <h4 className=' sm:block hidden'>Your Ingredients</h4>
-            </div>
-            <h4>76 Cal</h4>
+      <div className='p-1 md:w-5/6 w-full lg:h-full h-14'>
+        <div className='bg-secondary rounded-xl w-full h-full flex flex-row justify-between items-center p-2 md:gap-2'>
+          <div className='flex flex-col items-center justify-center'>
+            <p className='text-sm text-gray-600'>Total items:</p>
+            <p className='text-xl font-bold'>{totalCart}</p>
           </div>
-        </div>
-        <div className='p-1 md:w-1/6 w-full lg:h-full h-14'>
-          <div
+          <div className='flex flex-col items-center justify-center'>
+            <p className='text-sm text-gray-600'>Total Calories:</p>
+            <p className='text-xl font-bold'>{totalCal}</p>
+          </div>
+          <button
+            className='bg-primary text-white px-4 py-2 rounded-lg'
             onClick={() => setShowDialog(true)}
-            className=' bg-green-500 rounded-xl w-full h-full flex flex-row items-center text-center justify-center text-xl font-bold text-white cursor-pointer'
           >
-            <h4>Create Recipe</h4>
-          </div>
+            Create Recipe
+          </button>
         </div>
       </div>
-
+    </div>
       {/* Recipe Dialog */}
       <RecipeDialog
         isOpen={showDialog}
