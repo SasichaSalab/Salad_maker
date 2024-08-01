@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 
 interface DeleteDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  id:number;
+  id: number;
   onDelete: (id: number) => void;
 }
 
-const DeleteDialog: React.FC<DeleteDialogProps> = ({ isOpen, onClose, onDelete,id }) => {
-
+const DeleteDialog: React.FC<DeleteDialogProps> = ({ isOpen, onClose, onDelete, id }) => {
   if (!isOpen) return null;
 
   const handleDeleteRecipe = () => {
-      onDelete(id);
-      onClose(); // Close the dialog
+    onDelete(id);
+    onClose(); // Close the dialog
   };
 
   return (

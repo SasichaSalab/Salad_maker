@@ -17,7 +17,7 @@ interface Category {
 
 interface Ingredient {
   id: number;
-  ingredient: string;
+  name: string;
   category: string;
   image: string | null;
   calories: number;
@@ -88,11 +88,53 @@ const Page: React.FC = () => {
 
   const totalCart = useSelector((state: RootState) => state.cart.total);
   const totalCal = useSelector((state: RootState) => state.cart.totalCal);
-  const handleCreateRecipe = (recipeName: string) => {
-    alert(`Recipe "${recipeName}" created successfully!`);
-    setShowDialog(false);
-  };
   const cartItems = useSelector((state: RootState) => state.cart.items);
+  const generateUniqueNumericId = () => {
+    const timestamp = Date.now(); // Get the current timestamp
+    const random = Math.floor(Math.random() * 1000); // Generate a random number
+    return timestamp + random; // Combine them to create a unique ID
+  };
+  
+  const handleCreateRecipe = async (recipeName: string) => {
+    // Generate a unique numeric ID
+    const uniqueId = generateUniqueNumericId();
+  
+    // Prepare the recipe data
+    const recipeData = {
+      id: uniqueId,
+      name: recipeName,
+      ingredients: cartItems.map(item => ({
+        id: item.id,
+        amount: item.count,
+      })),
+    };
+    console.log(recipeData)
+  
+    try {
+      const response = await fetch('/api/recipes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(recipeData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const result = await response.json();
+      console.log('Recipe created successfully:', result);
+  
+      // Show success message or handle successful creation
+      alert(`Recipe "${recipeName}" created successfully!`);
+      setShowDialog(false);
+    } catch (error) {
+      console.error('Error creating recipe:', error);
+      // Show error message or handle failure
+      alert('Failed to create recipe. Please try again.');
+    }
+  };
   const handleIncrement = (id: number) => {
     // Dispatch increment count action
     dispatch(incrementCount(id));
@@ -213,7 +255,7 @@ const Page: React.FC = () => {
                 <Ingredients
                   key={ingredient.id}
                   imagePath={ingredient.image || '/assets/ingredients/no-image.png'}
-                  name={ingredient.ingredient}
+                  name={ingredient.name}
                   value_cal={ingredient.calories}
                   id={ingredient.id}
                   count={ingredientCounts[ingredient.id] || 0} // Get count from Redux store
@@ -241,7 +283,7 @@ const Page: React.FC = () => {
         </div>
         <div className='p-1 lg:w-2/12 md:w-4/12 w-full lg:h-full h-14'>
         <button
-            className='bg-emerald-500 text-white w-full h-full px-2 py-2 rounded-lg font-bold'
+            className='bg-emerald-500 text-white w-full h-full px-2 py-2 rounded-lg font-bold text-xl'
             onClick={() => setShowDialog(true)}
           >
             Create Recipe

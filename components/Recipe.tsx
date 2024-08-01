@@ -7,9 +7,10 @@ import DeleteDialog from './DeleteDialog';
 interface RecipeProps {
     recipename: string;
     cal: number;
+    id: number;
 }
 
-const Recipe: React.FC<RecipeProps> = ({ recipename, cal }) => {
+const Recipe: React.FC<RecipeProps> = ({ recipename, cal, id }) => {
     const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleDeleteClick = () => {
@@ -20,10 +21,19 @@ const Recipe: React.FC<RecipeProps> = ({ recipename, cal }) => {
         setDeleteDialogOpen(false);
     };
 
-    const handleDeleteConfirm = () => {
-        console.log(`Deleting recipe: ${recipename}`);
-        setDeleteDialogOpen(false);
-    };
+    const handleDeleteConfirm = async (id: number) => {
+        const response = await fetch(`/api/recipes?id=${id}`, {
+            method: 'DELETE',
+          });
+        
+          if (response.ok) {
+            const result = await response.json();
+            console.log('Delete successful:', result);
+          } else {
+            console.error('Delete failed:', await response.json());
+          }
+      };
+      
 
     return (
         <>
@@ -32,9 +42,9 @@ const Recipe: React.FC<RecipeProps> = ({ recipename, cal }) => {
                 <div className='absolute -top-16 -ml-20 transform -translate-x-1/2 w-56 h-56 bg-orange-500 rounded-full z-0'></div>
 
                 <div className='w-full h-full p-4 flex flex-col items-center justify-between z-10'>
-                    <div className='w-full flex flex-col bg-white h-1/2 rounded-xl items-start justify-center p-2 font-bold gap-2'>
+                    <div className='w-full h-1/2 p-2 bg-white rounded-xl flex flex-col items-start justify-center font-bold gap-2'>
                         <h4 className='text-sm text-tertiary'>{recipename}</h4>
-                        <div className='flex flex-row items-center justify-start gap-2 font-bold'>
+                        <div className='flex flex-row items-center gap-2 font-bold'>
                             <h4 className='text-2xl'>{cal}</h4>
                             <h4 className='text-secondary text-2xl'>Cal</h4>
                         </div>
@@ -52,7 +62,7 @@ const Recipe: React.FC<RecipeProps> = ({ recipename, cal }) => {
                             />
                             <h4 className='text-custom_red text-sm'>Delete</h4>
                         </div>
-                        <Link href={`/recipe/edit`} className='bg-white rounded-full w-1/2 flex flex-row gap-1 justify-center items-center p-2 font-semibold cursor-pointer'>
+                        <Link href={`/recipe/edit/${id}`} className='bg-white rounded-full w-1/2 flex flex-row gap-1 justify-center items-center p-2 font-semibold cursor-pointer'>
                             <Image
                                 src="/assets/icons/edit.png"
                                 alt="edit"
@@ -69,12 +79,12 @@ const Recipe: React.FC<RecipeProps> = ({ recipename, cal }) => {
                 <DeleteDialog
                     isOpen={isDeleteDialogOpen}
                     onClose={handleDeleteClose}
-                    onDelete={handleDeleteConfirm}
-                    id={1}
+                    onDelete={handleDeleteConfirm} // Ensure this matches the prop name
+                    id={id}
                 />
             )}
         </>
     );
-}
+};
 
 export default Recipe;

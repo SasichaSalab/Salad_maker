@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "ingredient 1",
+    "ingredients": [
+      {
+        "id": 1,
+        "amount": 2
+      },
+      {
+        "id": 2,
+        "amount": 3
+      }
+    ]
+  },
+  {
+    "id": 1722543267935,
+    "name": "ssss",
+    "ingredients": [
+      {
+        "id": 1,
+        "amount": 2
+      },
+      {
+        "id": 2,
+        "amount": 1
+      }
+    ]
+  }
+]
