@@ -226,25 +226,27 @@ const Page: React.FC = () => {
       </div>
       {/* Fixed Tab */}
       <div className='fixed bottom-0 left-0 lg:pl-60 pl-20 w-full lg:h-20 h-auto py-3 bg-white shadow-[250px_-5px_5px_2px_rgba(0,0,0,0.05)] flex flex-wrap items-center justify-center z-10'>
-      <div className='p-1 md:w-5/6 w-full lg:h-full h-14'>
-        <div className='bg-secondary rounded-xl w-full h-full flex flex-row justify-between items-center p-2 md:gap-2'>
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-sm text-gray-600'>Total items:</p>
-            <p className='text-xl font-bold'>{totalCart}</p>
+        <div className='p-1 lg:w-10/12 md:w-8/12 w-full lg:h-full h-14'>
+          <div className='bg-secondary rounded-xl w-full h-full flex flex-row justify-between items-center p-2 md:gap-2 font-bold text-white px-8'>
+            <div className='flex flex-row items-center justify-center gap-2'>
+              <div className='bg-white text-secondary w-7 h-7 flex items-center justify-center text-center rounded-lg'>
+              <p className='text-lg font-bold'>{totalCart}</p></div>
+              <p className='text-xl font-bold hidden sm:flex'>Your Ingredients</p>
+            </div>
+            <div className='flex flex-row items-center justify-center gap-1'>
+              <p className='text-xl font-bold'>{totalCal}</p>
+              <p className='text-xl font-bold'>Cal</p>
+            </div>
           </div>
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-sm text-gray-600'>Total Calories:</p>
-            <p className='text-xl font-bold'>{totalCal}</p>
-          </div>
-          <button
-            className='bg-primary text-white px-4 py-2 rounded-lg'
+        </div>
+        <div className='p-1 lg:w-2/12 md:w-4/12 w-full lg:h-full h-14'>
+        <button
+            className='bg-emerald-500 text-white w-full h-full px-2 py-2 rounded-lg font-bold'
             onClick={() => setShowDialog(true)}
           >
             Create Recipe
-          </button>
-        </div>
+          </button></div>
       </div>
-    </div>
       {/* Recipe Dialog */}
       <RecipeDialog
         isOpen={showDialog}
