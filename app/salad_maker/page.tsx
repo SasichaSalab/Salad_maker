@@ -7,9 +7,9 @@ import Ingredients from '@/components/Ingredients';
 import RecipeDialog from '@/components/RecipeDialog';
 import categories from '../../public/data/categories.json';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart, removeFromCart, updateCartItem } from '../../store/cartSlice'; // Import actions
+import { addToCart, removeFromCart, updateCartItem,clearCart } from '../../store/cartSlice'; // Import actions
 import { RootState } from '@/store/store';
-import { incrementCount, decrementCount } from '@/store/ingredientsSlice';
+import { incrementCount, decrementCount,resetCounts } from '@/store/ingredientsSlice';
 interface Category {
   imagePath: string;
   cardName: string;
@@ -129,6 +129,8 @@ const Page: React.FC = () => {
       // Show success message or handle successful creation
       alert(`Recipe "${recipeName}" created successfully!`);
       setShowDialog(false);
+      dispatch(clearCart());
+    dispatch(resetCounts());
     } catch (error) {
       console.error('Error creating recipe:', error);
       // Show error message or handle failure

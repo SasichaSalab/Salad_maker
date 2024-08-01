@@ -26,5 +26,23 @@
         "amount": 1
       }
     ]
+  },
+  {
+    "id": 1722543561815,
+    "name": "ncsnign",
+    "ingredients": [
+      {
+        "id": 1,
+        "amount": 2
+      },
+      {
+        "id": 2,
+        "amount": 1
+      },
+      {
+        "id": 6,
+        "amount": 1
+      }
+    ]
   }
 ]

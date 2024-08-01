@@ -27,8 +27,11 @@ const ingredientsSlice = createSlice({
       const { id, count } = action.payload;
       state.ingredients[id] = count;
     },
+    resetCounts(state) {
+      state.ingredients = {};
+    },
   },
 });
 
-export const { incrementCount, decrementCount, setCount } = ingredientsSlice.actions;
+export const { incrementCount, decrementCount, setCount,resetCounts } = ingredientsSlice.actions;
 export default ingredientsSlice.reducer;

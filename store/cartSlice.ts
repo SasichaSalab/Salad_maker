@@ -68,6 +68,11 @@ const cartSlice = createSlice({
         state.totalCal += calculateTotalCalories(id, count) - calculateTotalCalories(id, previousCount);
       }
     },
+    clearCart(state) {
+      state.items = [];
+      state.total = 0;
+      state.totalCal = 0;
+    },
   },
 });
 
@@ -77,5 +82,5 @@ const calculateTotalCalories = (id: number, count: number) => {
   return caloriePerUnit * count;
 };
 
-export const { addToCart, removeFromCart, updateCartItem } = cartSlice.actions;
+export const { addToCart, removeFromCart, updateCartItem ,clearCart} = cartSlice.actions;
 export default cartSlice.reducer;
