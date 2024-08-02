@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { FaPlusCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
@@ -19,9 +20,9 @@ export default function HomePage() {
           transition={{ duration: 0.5 }}
         >
           <h4 className="text-5xl font-bold">Welcome To Salad Maker Application</h4>
-          <div className="bg-gradient-to-r from-custom_green to-orange-400 py-3 w-64 text-center rounded-full font-bold text-white text-xl">
+          <Link href="/salad_maker" className="bg-gradient-to-r from-custom_green to-orange-400 py-3 w-64 text-center rounded-full font-bold text-white text-xl">
             Try creating a recipe.
-          </div>
+          </Link>
         </motion.div>
         <motion.div
           className="md:flex flex-col w-1/2 h-full hidden"
