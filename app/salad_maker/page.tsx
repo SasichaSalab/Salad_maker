@@ -31,6 +31,7 @@ const Page: React.FC = () => {
   const [showDialog, setShowDialog] = useState(false);
   const dispatch = useDispatch(); // Initialize dispatch
   const [searchTerm, setSearchTerm] = useState('');
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -128,14 +129,19 @@ const Page: React.FC = () => {
       console.log('Recipe created successfully:', result);
   
       // Show success message or handle successful creation
-      alert(`Recipe "${recipeName}" created successfully!`);
+      setAlertMessage(`Recipe "${recipeName}" created successfully!`);
       setShowDialog(false);
       dispatch(clearCart());
-    dispatch(resetCounts());
+      dispatch(resetCounts());
+
+      // Hide alert message after a few seconds
+      setTimeout(() => setAlertMessage(null), 3000);
     } catch (error) {
       console.error('Error creating recipe:', error);
       // Show error message or handle failure
-      alert('Failed to create recipe. Please try again.');
+      setAlertMessage('Failed to create recipe. Please try again.');
+      // Hide alert message after a few seconds
+      setTimeout(() => setAlertMessage(null), 3000);
     }
   };
   const handleIncrement = (id: number) => {
@@ -308,6 +314,11 @@ const Page: React.FC = () => {
         onClose={() => setShowDialog(false)}
         onCreate={handleCreateRecipe}
       />
+      {alertMessage && (
+        <div className="fixed top-10 right-10 bg-white border-2 border-secondary text-black p-4 rounded-md shadow-lg z-50">
+          {alertMessage}
+        </div>
+      )}
     </div>
   );
 };
