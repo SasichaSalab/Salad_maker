@@ -4,6 +4,7 @@ import { FaPlusCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Link from 'next/link';
 
+
 export default function HomePage() {
   return (
     <div className="flex flex-col items-start justify-start w-full">

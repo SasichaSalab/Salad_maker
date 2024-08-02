@@ -15,6 +15,7 @@ interface Category {
   cardName: string;
 }
 
+
 interface Ingredient {
   id: number;
   name: string;
