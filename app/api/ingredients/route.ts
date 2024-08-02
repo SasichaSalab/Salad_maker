@@ -45,7 +45,7 @@ export async function GET(request: Request) {
     // Filter ingredients by search term (name or calories)
     filteredIngredients = filteredIngredients.filter(
       (ingredient) =>
-        ingredient.ingredient.toLowerCase().includes(searchTerm) ||
+        ingredient.name.toLowerCase().includes(searchTerm) ||
         ingredient.calories.toString().includes(searchTerm)
     );
   }

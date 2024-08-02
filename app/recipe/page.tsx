@@ -5,55 +5,52 @@ import Recipe from '@/components/Recipe';
 const Page = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchCaloriesById = async (ingredientId: number) => {
-      try {
-        const response = await fetch(`/api/ingredients?caloriesById=${ingredientId}`);
-        if (response.ok) {
-          const data = await response.json();
-          return data.calories; // Assuming the API returns { calories: number }
-        } else {
-          console.error(`Failed to fetch calories for ingredient ID ${ingredientId}`);
-          return 0;
-        }
-      } catch (error) {
-        console.error('Error fetching ingredient calories:', error);
+  const fetchCaloriesById = async (ingredientId: number) => {
+    try {
+      const response = await fetch(`/api/ingredients?caloriesById=${ingredientId}`);
+      if (response.ok) {
+        const data = await response.json();
+        return data.calories; // Assuming the API returns { calories: number }
+      } else {
+        console.error(`Failed to fetch calories for ingredient ID ${ingredientId}`);
         return 0;
       }
-    };
+    } catch (error) {
+      console.error('Error fetching ingredient calories:', error);
+      return 0;
+    }
+  };
 
-    const fetchRecipes = async () => {
-      try {
-        const response = await fetch('/api/recipes');
-        if (response.ok) {
-          const data = await response.json();
-          const recipesWithCalories = await Promise.all(
-            data.map(async (recipe: any) => {
-              const totalCalories = await calculateTotalCalories(recipe.ingredients);
-              return { ...recipe, totalCalories };
-            })
-          );
-          setRecipes(recipesWithCalories);
-        } else {
-          console.error('Failed to fetch recipes');
-        }
-      } catch (error) {
-        console.error('Error fetching recipes:', error);
-      } finally {
-        setLoading(false);
+  const fetchRecipes = async () => {
+    try {
+      const response = await fetch('/api/recipes');
+      if (response.ok) {
+        const data = await response.json();
+        const recipesWithCalories = await Promise.all(
+          data.map(async (recipe: any) => {
+            const totalCalories = await calculateTotalCalories(recipe.ingredients);
+            return { ...recipe, totalCalories };
+          })
+        );
+        setRecipes(recipesWithCalories);
+      } else {
+        console.error('Failed to fetch recipes');
       }
-    };
-
-    const calculateTotalCalories = async (ingredientsList: { id: number; amount: number }[]) => {
-      let total = 0;
-      for (const ingredient of ingredientsList) {
-        const calories = await fetchCaloriesById(ingredient.id);
-        total += calories * ingredient.amount;
-      }
-      return total;
-    };
-
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  const calculateTotalCalories = async (ingredientsList: { id: number; amount: number }[]) => {
+    let total = 0;
+    for (const ingredient of ingredientsList) {
+      const calories = await fetchCaloriesById(ingredient.id);
+      total += calories * ingredient.amount;
+    }
+    return total;
+  };
+  useEffect(() => {
     fetchRecipes();
   }, []);
 
@@ -76,6 +73,7 @@ const Page = () => {
                 recipename={recipe.name}
                 cal={recipe.totalCalories}
                 id={recipe.id}
+                fetchRecipes={fetchRecipes}
               />
             ))}
           </div>

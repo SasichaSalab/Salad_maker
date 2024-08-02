@@ -45,6 +45,7 @@ const Page: React.FC<{ params: Params }> = ({ params }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (params.id == null) {
@@ -139,7 +140,10 @@ const Page: React.FC<{ params: Params }> = ({ params }) => {
       if (response.ok) {
         const updatedData = await response.json();
         console.log('Recipe updated successfully:', updatedData);
-        router.push('/recipe');
+        setAlertMessage('Recipe updated successfully!');
+        setTimeout(() => {
+          router.push('/recipe');
+        }, 2000); // 2 seconds delay before redirect
       } else {
         const errorData = await response.json();
         console.error('Failed to update recipe:', errorData);
@@ -148,6 +152,10 @@ const Page: React.FC<{ params: Params }> = ({ params }) => {
     } catch (error) {
       console.error('Error updating recipe:', error);
       setError('Error updating recipe');
+    } finally {
+      setTimeout(() => {
+        setAlertMessage(null);
+      }, 3000);
     }
   };
 
@@ -242,6 +250,11 @@ const Page: React.FC<{ params: Params }> = ({ params }) => {
           onClose={() => setShowModal(false)}
           onSave={handleModalSave}
         />
+      )}
+      {alertMessage && (
+        <div className="fixed top-10 right-10 bg-white border-2 border-secondary text-black p-4 rounded-md shadow-lg z-50">
+          {alertMessage}
+        </div>
       )}
     </div>
   );

@@ -127,8 +127,6 @@ export async function PUT(request: Request) {
   }
 }
 
-
-
 export async function PATCH(request: Request) {
   try {
     const { id, ingredientId } = await request.json();

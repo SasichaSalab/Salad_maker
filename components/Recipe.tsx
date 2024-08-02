@@ -8,9 +8,10 @@ interface RecipeProps {
     recipename: string;
     cal: number;
     id: number;
+    fetchRecipes: () => void;
 }
 
-const Recipe: React.FC<RecipeProps> = ({ recipename, cal, id }) => {
+const Recipe: React.FC<RecipeProps> = ({ recipename, cal, id,fetchRecipes }) => {
     const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const handleDeleteClick = () => {
@@ -29,6 +30,7 @@ const Recipe: React.FC<RecipeProps> = ({ recipename, cal, id }) => {
           if (response.ok) {
             const result = await response.json();
             console.log('Delete successful:', result);
+            fetchRecipes()
           } else {
             console.error('Delete failed:', await response.json());
           }

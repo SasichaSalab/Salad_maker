@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import Image from 'next/image';
 
@@ -10,6 +10,17 @@ interface RecipeDialogProps {
 
 const RecipeDialog: React.FC<RecipeDialogProps> = ({ isOpen, onClose, onCreate }) => {
   const [recipeName, setRecipeName] = useState('');
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (alertMessage) {
+      const timer = setTimeout(() => {
+        setAlertMessage(null);
+      }, 3000); // Hide alert after 3 seconds
+
+      return () => clearTimeout(timer); // Clear the timer if the component is unmounted
+    }
+  }, [alertMessage]);
 
   if (!isOpen) return null;
 
@@ -19,13 +30,13 @@ const RecipeDialog: React.FC<RecipeDialogProps> = ({ isOpen, onClose, onCreate }
       setRecipeName(''); // Clear the input field
       onClose(); // Close the dialog
     } else {
-      alert('Please enter a recipe name.');
+      setAlertMessage('Please enter a recipe name.');
     }
   };
 
   return (
     <div className='fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50'>
-      <div className='bg-white rounded-lg p-4 shadow-lg w-96'>
+      <div className='bg-white rounded-lg p-4 shadow-lg w-96 relative'>
         <div className='flex flex-col gap-4 items-center justify-center'>
           <div className='w-full flex justify-end items-center'>
             <FaTimes onClick={onClose} className='text-tertiary text-lg cursor-pointer'>
@@ -64,6 +75,11 @@ const RecipeDialog: React.FC<RecipeDialogProps> = ({ isOpen, onClose, onCreate }
             </button>
           </div>
         </div>
+        {alertMessage && (
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white border-2 border-secondary text-black p-2 rounded-md shadow-lg w-96 h-28 text-center flex flex-row items-center justify-center">
+            {alertMessage}
+          </div>
+        )}
       </div>
     </div>
   );
