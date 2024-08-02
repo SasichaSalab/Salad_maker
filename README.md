@@ -6,7 +6,12 @@
 
 To get started with the Salad Maker project, follow these steps:
 
-### 1. Set Up Environment Variables
+1. **Set Up Environment Variables**
+
+   Create a `.env.local` file in the root directory of the project. Inside this file, add the following line:
+
+   ```plaintext
+   NEXT_PUBLIC_API_URL=http://localhost:3000/api
 
 Create a `.env.local` file in the root directory of the project. Inside this file, add the following line:
 
